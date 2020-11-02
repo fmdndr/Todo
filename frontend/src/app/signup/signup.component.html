@@ -1,0 +1,31 @@
+<div class="container h-75">
+  <div class="row h-100 justify-content-center align-items-center">
+    <div class="col-md-6">
+      <form>
+        <div class="form-group">
+          <label for="username">First name</label>
+          <input type="text" [(ngModel)]="user.firstname" name="firstname" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last name</label>
+          <input type="text" [(ngModel)]="user.lastname" name="lastname" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Email</label>
+          <input type="email" [(ngModel)]="user.email" name="email" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Username</label>
+          <input type="text" [(ngModel)]="user.username" name="username" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Password</label>
+          <input type="password" [(ngModel)]="user.password" name="password" class="form-control" />
+        </div>
+        <button type="submit" (click)="handleRegister()" class="btn btn-outline-success btn-sm btn-block">
+          Register
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

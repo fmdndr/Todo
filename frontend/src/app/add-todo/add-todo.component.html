@@ -1,0 +1,35 @@
+<div class="container h-50">
+  <div class="row h-100 justify-content-center align-items-center">
+    <div class="col-md-12 d-flex justify-content-center">
+      <div class="card justify-content-center" style="width: 50rem;">
+        <div class="card-body">
+          <form>
+            <div class="form-group">
+              <label for="todoDescription">Description</label>
+              <input
+                type="text"
+                [(ngModel)]="todo.description"
+                name="description"
+                #required
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="targetDate">Target Date</label>
+              <input type="date" [(ngModel)]="todo.createdDate" name="targetDate" #required class="form-control" />
+            </div>
+
+            <button type="submit" (click)="saveTodo()" class="btn btn-outline-success btn-sm btn-block">
+              Add
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-end">
+    <div class="col-md-2 d-flex justify-content-end">
+      <a routerLink="/todos" class="btn btn-outline-success align-self-end"> go back</a>
+    </div>
+  </div>
+</div>
