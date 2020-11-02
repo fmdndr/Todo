@@ -343,11 +343,14 @@ This is clasical entities which have  as know in every OOP langugage\.
                 return super.authenticationManagerBean();
             }
 
+            // Password Encoding here
             @Bean
             public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
             }
-
+            
+			// This function ovveride from Adapter and helps us for 
+			//filter url and  check JWT authentication token is valid or invalid ? 
             @Override
             protected void configure(HttpSecurity http) throws Exception {
                 http.cors().and().csrf().disable()
@@ -362,5 +365,171 @@ This is clasical entities which have  as know in every OOP langugage\.
         }
    ```
 
-__This file is very important for enable to  Spring Security. As you can see \
- WebSecurityConfig class extends WebSecurityConfigurerAdapter this class comes from  Spring security__ 
+>This file is very important for enable to  Spring Security. As you can see \
+ WebSecurityConfig class extends WebSecurityConfigurerAdapter this class comes from  Spring security protected void configure function helps us for setting CORS policy__
+   
+>I'm firstly declareted  **AuthenticationEntryPoint** because this is will start  JWT initialization and  we should declare ***session management***  with session manager we are able to manage users sessio tokens  are expired or not ?  if user session  expired then we are asking for Authorization requesit with ***.authorizeRequests*** if everything is fine then we are  sending a ***Response message***. Depends on this response we are routing user in frontend side. Last thing that we should add for perfectly use **JWT**. We are need to filter all Http Requests like post, put ,read and delete  at this moment **http.addFilterBefore** method helps us for inject our Authentication JWT token filter.
+
+### AuthEntryPointJwt.java
+
+```*
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AuthEntryPointJwt implements AuthenticationEntryPoint {
+
+	private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException authException) throws IOException, ServletException {
+		logger.error("Unauthorized error: {}", authException.getMessage());
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
+	}
+
+}
+```
+
+> Simply this class  helps us filter all request with Servlet containers if a request haven't Authorization token or token is expired then throws Cors Policy exception error.
+
+### AuthTokenFilter.java
+
+```*
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.world.TodoBackend.security.services.UserDetailsServiceImpl;
+
+public class AuthTokenFilter extends OncePerRequestFilter {
+	@Autowired
+	private JwtUtils jwtUtils;
+
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
+
+	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		try {
+			String jwt = parseJwt(request);
+			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+				String username = jwtUtils.getUserNameFromJwtToken(jwt);
+
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			}
+		} catch (Exception e) {
+			logger.error("Cannot set user authentication: {}", e);
+		}
+
+		filterChain.doFilter(request, response);
+	}
+
+	private String parseJwt(HttpServletRequest request) {
+		String headerAuth = request.getHeader("Authorization");
+
+		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+			return headerAuth.substring(7, headerAuth.length());
+		}
+
+		return null;
+	}
+}
+```
+
+> If user passed from AuthEntryPointJwt functions then we are filtering user token with using JWT parser.
+
+### JwtUtils.java
+
+```*
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import com.world.TodoBackend.security.services.UserDetailsImpl;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
+@Component
+public class JwtUtils {
+	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
+
+	@Value("${world.app.jwtSecret}")
+	private String jwtSecret;
+
+	@Value("${world.app.jwtExpirationMs}")
+	private int jwtExpirationMs;
+
+	public String generateJwtToken(Authentication authentication) {
+
+		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+
+		return Jwts.builder().setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
+	}
+
+	public String getUserNameFromJwtToken(String token) {
+		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+	}
+
+	public boolean validateJwtToken(String authToken) {
+		try {
+			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+			return true;
+		} catch (SignatureException e) {
+			logger.error("Invalid JWT signature: {}", e.getMessage());
+		} catch (MalformedJwtException e) {
+			logger.error("Invalid JWT token: {}", e.getMessage());
+		} catch (ExpiredJwtException e) {
+			logger.error("JWT token is expired: {}", e.getMessage());
+		} catch (UnsupportedJwtException e) {
+			logger.error("JWT token is unsupported: {}", e.getMessage());
+		} catch (IllegalArgumentException e) {
+			logger.error("JWT claims string is empty: {}", e.getMessage());
+		}
+
+		return false;
+	}
+}
+```
+> This class  prepared for use in AuthTokenFilter.
+
+**UserDetailsImpl.java** and **UserDetailsServiceImpl.java** files simply using  User model for JWT credentials. I believe anyone can understand if look at those java classes.
