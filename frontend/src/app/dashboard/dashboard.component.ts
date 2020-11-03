@@ -1,6 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { AuthenticationService } from "../services/auth/authentication.service";
 
 @Component({
   selector: "app-dashboard",
@@ -10,10 +8,10 @@ import { AuthenticationService } from "../services/auth/authentication.service";
 export class DashboardComponent implements OnInit {
   username: string = "";
 
-  constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.username = this.route.snapshot.params["username"];
+    this.username = sessionStorage.getItem("auth-user");
     // console.log("this is dashboard username");
     // console.log(this.authenticationService.getAuthenticatedToken());
   }
