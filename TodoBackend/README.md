@@ -1,6 +1,40 @@
 # Spring Boot With JWT
 
-## Spring Boot 
+##  Properties settings instead of Application Properties
+
+We shouldn't set  our application properties to application.properties file \ like database url or  database username. We should send our credentials via Command Line arguments but we can use application.properties  for development stage.
+
+```*
+logging.level.org.springframework=debug // We can set info or Trace
+
+spring.datasource.url=jdbc:postgresql://localhost:5432/DatabseName?useSSL=false&serverTimeZone=UTC&useLegacyDatetimeCode=false
+spring.datasource.username= Database username
+spring.datasource.password= Database Password
+
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation= true
+spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.PostgreSQLDialect
+
+# Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto=update
+
+# App Properties
+# SQL command debug
+spring.jpa.show-sql=true
+
+world.app.jwtSecret= Your Secreet key
+world.app.jwtExpirationMs=86000 // Expiration Time
+```
+ ## Maven Command Line arguments 
+>mvn spring-boot:run -Dspring-boot.run.arguments=\
+"--spring.datasource.username= your db  username\
+ --spring.datasource.password= your db password\
+  --spring.datasource.url=jdbc:postgresql://localhost:5432/your db name?useSSL=false&serverTimeZone=UTC&useLegacyDatetimeCode=false\
+   --spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation= true\
+    --spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.PostgreSQLDialect\
+	 --logging.level.org.springframework=info\
+	  --world.app.jwtSecret=mySecret --world.app.jwtExpirationMs=8600000"
+
+## Spring Boot
 
 Hello Everyone, I will try to explain as much as possible. \
 I like to use **Eclipse**  that cause all my configurations depends  to eclipse environment. \
@@ -8,7 +42,8 @@ I like to use **Eclipse**  that cause all my configurations depends  to eclipse 
 I want to start basic but important  stuff like Entities, so let's start have a enjoy. \
 
 ### User.java
-```
+
+```*
 import java.util.HashSet;
 import java.util.Set;
 

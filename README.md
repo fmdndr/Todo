@@ -4,15 +4,21 @@ ___This project were a challange for me. I learned a lot of things about Spring 
 
 Screens
 
+## Home Page
 ![alt text](./screens/main.png?raw=true "main")
 
+## Login Page
 ![alt text](./screens/login.png?raw=true "login")
 
+## Register Page
 ![alt text](./screens/register.png?raw=true "register")
 
+## Dashboard Page
 ![alt text](./screens/dashboard.png?raw=true "dashboard")
 
+## Todo Page
 ![alt text](./screens/list-todo.png?raw=true "todos")
 
+## Add Todo 
 ![alt text](./screens/add-todo.png?raw=true "add todo")
 
