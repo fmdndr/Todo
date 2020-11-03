@@ -1,3 +1,4 @@
+
 ### STS ###
 .apt_generated
 .classpath
@@ -6,10 +7,12 @@
 .settings
 .springBeans
 .sts4-cache
+
 ### Maven ###
 target/
 !.mvn/wrapper/maven-wrapper.jar
-.src/main/resources/application.properties
+!.src/main/resources/application.properties
+
 # Compiled class file
 *.class
 
