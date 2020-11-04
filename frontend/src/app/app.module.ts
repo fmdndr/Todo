@@ -15,7 +15,8 @@ import { ErrorComponent } from "./error/error.component";
 import { LogoutComponent } from "./logout/logout.component";
 
 import { authInterceptorProviders } from "./services/http/http-intercepter.service";
-import { SignupComponent } from './signup/signup.component';
+import { SignupComponent } from "./signup/signup.component";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   declarations: [
@@ -30,7 +31,7 @@ import { SignupComponent } from './signup/signup.component';
     LogoutComponent,
     SignupComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule, NgbModule],
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
 })

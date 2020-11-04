@@ -1,22 +1,30 @@
 <div class="container h-50">
   <div class="row h-100 justify-content-center align-items-center">
-    <div class="col-md-12 d-flex justify-content-center">
-      <div class="card justify-content-center" style="width: 50rem;">
-        <div class="card-body">
+    <div class="col-md-6 d-flex justify-content-center">
+      <div class="card justify-content-center border-0" style="width: 50rem;">
+        <div class="card-body bg-dark">
           <form>
             <div class="form-group">
-              <label for="todoDescription">Description</label>
-              <input
-                type="text"
-                [(ngModel)]="todo.description"
+              <label for="todoDescription" style="color: '#37a849';">Description</label>
+              <textarea
                 name="description"
-                #required
+                [(ngModel)]="todo.description"
+                requrired
+                cols="20"
+                rows="5"
                 class="form-control"
-              />
+              ></textarea>
             </div>
             <div class="form-group">
-              <label for="targetDate">Target Date</label>
-              <input type="date" [(ngModel)]="todo.createdDate" name="targetDate" #required class="form-control" />
+              <label for="targetDate" style="color: '#37a849';">Target Date</label>
+              <input
+                type="date"
+                [(ngModel)]="todo.createdDate"
+                name="targetDate"
+                ngb
+                #required
+                class="form-control .datepicker"
+              />
             </div>
 
             <button type="submit" (click)="saveTodo()" class="btn btn-outline-success btn-sm btn-block">
