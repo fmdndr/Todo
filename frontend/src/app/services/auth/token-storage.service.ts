@@ -9,12 +9,12 @@ export class TokenStorageService {
   constructor() {}
 
   signOut(): void {
-    window.sessionStorage.clear();
+    sessionStorage.clear();
   }
 
   public saveToken(token: string): void {
-    window.sessionStorage.removeItem(TOKEN_KEY);
-    window.sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.setItem(TOKEN_KEY, token);
   }
 
   public getToken(): string {
@@ -22,8 +22,8 @@ export class TokenStorageService {
   }
 
   public saveUser(user): void {
-    window.sessionStorage.removeItem(USER_KEY);
-    window.sessionStorage.setItem(USER_KEY, user);
+    sessionStorage.removeItem(USER_KEY);
+    sessionStorage.setItem(USER_KEY, user);
   }
 
   public getUser(): any {

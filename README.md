@@ -19,6 +19,8 @@ Screens
 ## Todo Page
 ![alt text](./screens/list-todo.png?raw=true "todos")
 
-## Add Todo 
+## Add Todo Page 
 ![alt text](./screens/add-todo.png?raw=true "add todo")
 
+## Logout  Page
+![alt text](./screens/logout.png?raw=true "logout")
