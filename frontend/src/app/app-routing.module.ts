@@ -15,6 +15,7 @@ const routes: Routes = [
   { path: "", component: WelcomeComponent },
   { path: "login", component: LoginComponent },
   { path: "signup", component: SignupComponent },
+  { path: "dashboard/:username", component: DashboardComponent, canActivate: [RouteGuardService] },
   { path: "dashboard", component: DashboardComponent, canActivate: [RouteGuardService] },
   { path: "todos", component: TodosComponent, canActivate: [RouteGuardService] },
   { path: "add/:username", component: AddTodoComponent, canActivate: [RouteGuardService] },
